@@ -12,11 +12,11 @@ build/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
+**.idea
+**.iws
+**.iml
+**.ipr
+**/out/
 
 ### NetBeans ###
 /nbproject/private/
@@ -24,3 +24,6 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### Eclipse ###
+**/bin/
