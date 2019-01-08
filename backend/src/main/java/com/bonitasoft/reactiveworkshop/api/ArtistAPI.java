@@ -9,8 +9,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.artist.ArtistViews;
-import com.bonitasoft.reactiveworkshop.domain.artist.ArtistViews.WithComments;
-import com.bonitasoft.reactiveworkshop.domain.artist.ArtistViews.WithoutComments;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
