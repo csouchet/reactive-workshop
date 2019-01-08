@@ -3,11 +3,12 @@ package com.bonitasoft.reactiveworkshop.api;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.bonitasoft.reactiveworkshop.domain.Artist;
-import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
+import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 
 @RestController
 public class GenreApi {
