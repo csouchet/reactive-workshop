@@ -1,16 +1,15 @@
 package com.bonitasoft.reactiveworkshop.repository;
 
-import java.util.Collection;
-
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 
-@Repository
-public interface ArtistRepository extends JpaRepository<Artist, String> {
+import reactor.core.publisher.Flux;
 
-	// extends MongoRepository<Artist, String> {
+@Repository
+public interface ArtistRepository extends ReactiveMongoRepository<Artist, String> {
+	// extends JpaRepository<Artist, String> {
 
 	/**
 	 * Get all artists corresponding to the specified genre
@@ -19,6 +18,6 @@ public interface ArtistRepository extends JpaRepository<Artist, String> {
 	 *            The genre to filter
 	 * @return The artists corresponding to the specified genre
 	 */
-	Collection<Artist> findAllByGenre(String genre);
+	Flux<Artist> findAllByGenre(String genre);
 
 }

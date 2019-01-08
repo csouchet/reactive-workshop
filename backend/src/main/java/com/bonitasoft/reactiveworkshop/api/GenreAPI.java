@@ -2,10 +2,7 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.http.MediaType;
@@ -40,14 +37,12 @@ public class GenreAPI {
 	}
 
 	@GetMapping("/genres")
-	public List<String> findAll() {
+	public Flux<String> findAll() {
 		return artistRepository.findAll()
-				.stream()
 				.map(Artist::getGenre)
 				.filter(g -> !g.isEmpty())
 				.distinct()
-				.sorted()
-				.collect(Collectors.toList());
+				.sort();
 	}
 
 	/**
@@ -105,7 +100,7 @@ public class GenreAPI {
 
 		@Cleanup
 		final Stream<Artist> stream = artistRepository.findAllByGenre(genre)
-				.stream();
+				.toStream();
 		stream.forEach(artist -> mappingFilteredArtistById.put(artist.getId(), artist));
 
 		return mappingFilteredArtistById;

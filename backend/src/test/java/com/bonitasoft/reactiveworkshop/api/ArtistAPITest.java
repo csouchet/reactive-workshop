@@ -2,8 +2,7 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-
-import java.util.Optional;
+import static org.mockito.Mockito.mock;
 
 import org.csouchet.test.extension.TestStatusLoggerExtension;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +25,7 @@ import reactor.core.publisher.Flux;
 import reactor.test.publisher.TestPublisher;
 
 /**
- * @author SOUCHET CÃ©line
+ * @author SOUCHET Céline
  *
  */
 @ExtendWith({TestStatusLoggerExtension.class, SpringExtension.class})
@@ -56,7 +55,7 @@ public class ArtistAPITest {
 				.name("name")
 				.genre("genre")
 				.build();
-		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
+		given(artistRepository.findById(id)).willReturn(Mono.just(artist));
 
 		final Comment comment = new Comment(new Artist(), "user name", "message");
 		given(commentService.get10LastCommentsOfArtist(id)).willReturn(Flux.just(comment));
@@ -81,6 +80,7 @@ public class ArtistAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return the artist with a empty list of comments when the External Service returns a empty list of comments")
 	public void findByIdWith10LastComments_should_return_artist_with_empty_comments_when_external_service_returns_NO_comments() {
@@ -91,7 +91,7 @@ public class ArtistAPITest {
 				.name("name")
 				.genre("genre")
 				.build();
-		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
+		given(artistRepository.findById(id)).willReturn(Mono.just(artist));
 
 		given(commentService.get10LastCommentsOfArtist(id)).willReturn(Flux.empty());
 
@@ -115,6 +115,7 @@ public class ArtistAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return a 404 response when the External Service returns 4xx or 5xx status code")
 	public void findByIdWith10LastComments_should_return_404_status_when_bodyToFlux_returns_NotFoundException() {
@@ -125,7 +126,7 @@ public class ArtistAPITest {
 				.name("name")
 				.genre("genre")
 				.build();
-		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
+		given(artistRepository.findById(id)).willReturn(Mono.just(artist));
 
 		final Flux<Comment> flux = TestPublisher.<Comment>create()
 				.error(new NotFoundException())
@@ -145,12 +146,27 @@ public class ArtistAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return a 404 response when there is no artist corresponding to the id")
 	public void findByIdWith10LastComments_should_return_404_status_when_artist_NOT_exist() {
 		// Given
 		final String id = "2";
-		given(artistRepository.findById(id)).willReturn(Optional.empty());
+		given(artistRepository.findById(id)).willReturn(Mono.empty());
+
+		final Comment comment = new Comment(new Artist(), "user name", "message");
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/{artistId}/last10",
+		// id)).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(comment));
+
+		given(commentService.get10LastCommentsOfArtist(id)).willReturn(Flux.just(comment));
 
 		// When // Then
 		webTestClient.get()

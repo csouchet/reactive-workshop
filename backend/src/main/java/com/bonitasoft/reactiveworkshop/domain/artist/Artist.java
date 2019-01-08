@@ -3,12 +3,12 @@ package com.bonitasoft.reactiveworkshop.domain.artist;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+//import javax.persistence.Id;
+//import javax.persistence.Transient;
 
-//import org.springframework.data.annotation.Id;
-//import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.domain.comment.CommentsViews;
@@ -23,8 +23,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-//@Document
-@Entity
+@Document
+// @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

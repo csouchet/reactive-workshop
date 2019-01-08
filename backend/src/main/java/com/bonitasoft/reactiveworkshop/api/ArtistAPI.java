@@ -14,6 +14,7 @@ import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 import com.bonitasoft.reactiveworkshop.service.CommentService;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -30,15 +31,16 @@ public class ArtistAPI {
 
 	@JsonView(ArtistViews.WithoutComments.class)
 	@GetMapping("/artists")
-	public List<Artist> findAll() {
+	public Flux<Artist> findAll() {
 		return artistRepository.findAll();
 	}
 
 	@JsonView(ArtistViews.WithoutComments.class)
 	@GetMapping("/artist/{id}")
-	public Artist findById(@PathVariable final String id) throws NotFoundException {
+	public Mono<Artist> findById(@PathVariable final String id) {
+		final Mono<Artist> fallback = Mono.error(NotFoundException::new);
 		return artistRepository.findById(id)
-				.orElseThrow(NotFoundException::new);
+				.switchIfEmpty(fallback);
 	}
 
 	/**
@@ -47,13 +49,11 @@ public class ArtistAPI {
 	 * @param id
 	 *            The identifier of the artist to find
 	 * @return The artist with its 10 last comments
-	 * @throws NotFoundException
-	 *             Throws when the artist is not found
 	 */
 	@JsonView(ArtistViews.WithComments.class)
 	@GetMapping("/artist/{id}/comments")
 	public Mono<Artist> findByIdWith10LastComments(@PathVariable final String id) throws NotFoundException {
-		final Mono<Artist> artistFlux = Mono.just(findById(id));
+		final Mono<Artist> artistFlux = findById(id);
 		final Mono<List<Comment>> commentsFlux = commentService.get10LastCommentsOfArtist(id)
 				.collectList();
 

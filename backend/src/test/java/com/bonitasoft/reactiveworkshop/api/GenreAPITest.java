@@ -5,9 +5,8 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -53,6 +52,7 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("getStreamOfCommentByGenre() should return a list of comments with their artist when the External Service returns the comments")
 	public void getStreamOfCommentByGenre_should_return_comments_with_artist_when_external_service_returns_comments() {
@@ -63,7 +63,7 @@ public class GenreAPITest {
 				.name("name")
 				.genre("genre")
 				.build();
-		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
+		given(artistRepository.findAllByGenre(genre)).willReturn(Flux.just(artist));
 
 		final Comment comment = generateComment();
 		given(commentService.getCommentsStream()).willReturn(Flux.just(comment));
@@ -91,12 +91,13 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("getStreamOfCommentByGenre() should return an empty list of comments when the External Service returns a comment with an artist with wrong genre")
 	public void getStreamOfCommentByGenre_should_return_NO_comments_when_artist_of_comment_has_wrong_genre() {
 		// Given
 		final String genre = "genre";
-		given(artistRepository.findAllByGenre(genre)).willReturn(new ArrayList<>());
+		given(artistRepository.findAllByGenre(genre)).willReturn(Flux.empty());
 
 		given(commentService.getCommentsStream()).willReturn(Flux.just(generateComment()));
 
@@ -119,6 +120,7 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("getStreamOfCommentByGenre() should return an empty list of comments when the External Service returns a empty list of comments")
 	public void getStreamOfCommentByGenre_should_return_NO_comments_when_external_service_returns_NO_comments() {
@@ -129,7 +131,7 @@ public class GenreAPITest {
 				.name("name")
 				.genre("genre")
 				.build();
-		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
+		given(artistRepository.findAllByGenre(genre)).willReturn(Flux.just(artist));
 
 		given(commentService.getCommentsStream()).willReturn(Flux.empty());
 
@@ -152,6 +154,7 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("getStreamOfCommentByGenre() should return a 404 response when the External Service returns 4xx or 5xx status code")
 	public void getStreamOfCommentByGenre_should_return_404_status_when_bodyToFlux_returns_NotFoundException() {
@@ -162,7 +165,7 @@ public class GenreAPITest {
 				.name("name")
 				.genre("genre")
 				.build();
-		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
+		given(artistRepository.findAllByGenre(genre)).willReturn(Flux.just(artist));
 
 		final Flux<Comment> flux = TestPublisher.<Comment>create()
 				.error(new NotFoundException())
@@ -182,6 +185,7 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#find10LastCommentsByGenre(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("find10LastCommentsByGenre() should return 10 last comments with their artist when the External Service returns the comments")
 	public void find10LastCommentsByGenre_should_return_10_last_comments_with_artist_when_external_service_returns_comments() {
@@ -192,7 +196,7 @@ public class GenreAPITest {
 				.name("name")
 				.genre("genre")
 				.build();
-		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
+		given(artistRepository.findAllByGenre(genre)).willReturn(Flux.just(artist));
 
 		final Comment comment = generateComment();
 		final Comment commentWithWrongArtist = generateComment();
@@ -231,6 +235,7 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#find10LastCommentsByGenre(java.lang.String)}.
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("find10LastCommentsByGenre() should return a 404 response when the External Service returns 4xx or 5xx status code")
 	public void find10LastCommentsByGenre_should_return_404_status_when_bodyToFlux_returns_NotFoundException() {
@@ -241,7 +246,7 @@ public class GenreAPITest {
 				.name("name")
 				.genre("genre")
 				.build();
-		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
+		given(artistRepository.findAllByGenre(genre)).willReturn(Flux.just(artist));
 
 		final Flux<Comment> flux = TestPublisher.<Comment>create()
 				.error(new NotFoundException())
