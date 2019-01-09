@@ -5,7 +5,6 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,10 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
-import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
-import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
@@ -50,13 +45,15 @@ public class GenreAPITest {
 	private ArtistRepository artistRepository;
 
 	@MockBean
-	private WebClient webClient;
+	private CommentClient commentClient;
+
+	// @MockBean
+	// private WebClient webClient;
 
 	/**
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("getStreamOfCommentByGenre() should return a list of comments with their artist when the External Service returns the comments")
 	public void getStreamOfCommentByGenre_should_return_comments_with_artist_when_external_service_returns_comments() {
@@ -70,13 +67,16 @@ public class GenreAPITest {
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
 
 		final Comment comment = generateComment();
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(comment));
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(comment));
+		given(commentClient.getCommentsStream()).willReturn(Flux.just(comment));
 
 		// When
 		final List<Comment> result = webTestClient.get()
@@ -101,7 +101,6 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("getStreamOfCommentByGenre() should return an empty list of comments when the External Service returns a comment with an artist with wrong genre")
 	public void getStreamOfCommentByGenre_should_return_NO_comments_when_artist_of_comment_has_wrong_genre() {
@@ -109,13 +108,17 @@ public class GenreAPITest {
 		final String genre = "genre";
 		given(artistRepository.findAllByGenre(genre)).willReturn(new ArrayList<>());
 
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(generateComment()));
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(generateComment()));
+
+		given(commentClient.getCommentsStream()).willReturn(Flux.just(generateComment()));
 
 		// When
 		final List<Comment> result = webTestClient.get()
@@ -136,7 +139,6 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("getStreamOfCommentByGenre() should return an empty list of comments when the External Service returns a empty list of comments")
 	public void getStreamOfCommentByGenre_should_return_NO_comments_when_external_service_returns_NO_comments() {
@@ -149,13 +151,17 @@ public class GenreAPITest {
 				.build();
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
 
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.empty());
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.empty());
+
+		given(commentClient.getCommentsStream()).willReturn(Flux.empty());
 
 		// When
 		final List<Comment> result = webTestClient.get()
@@ -176,7 +182,6 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("getStreamOfCommentByGenre() should return a response with internal error when the External Service returns  4xx or 5xx status code")
 	public void getStreamOfCommentByGenre_should_return_internal_error_when_bodyToFlux_throws_WebClientResponseException() {
@@ -189,13 +194,17 @@ public class GenreAPITest {
 				.build();
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
 
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
+
+		given(commentClient.getCommentsStream()).willThrow(WebClientResponseException.class);
 
 		// When // Then
 		webTestClient.get()
@@ -210,7 +219,6 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#find10LastCommentsByGenre(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("find10LastCommentsByGenre() should return 10 last comments with their artist when the External Service returns the comments")
 	public void find10LastCommentsByGenre_should_return_10_last_comments_with_artist_when_external_service_returns_comments() {
@@ -232,13 +240,18 @@ public class GenreAPITest {
 		});
 		final Flux<Comment> comments = Flux.just(comment, comment, commentWithWrongArtist)
 				.mergeWith(randomComment.repeat(7));
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/last10")).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willReturn(comments)
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/last10")).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(comments)
+		// .willReturn(randomComment.repeat(10));
+
+		given(commentClient.get10LastComments()).willReturn(comments)
 				.willReturn(randomComment.repeat(10));
 
 		// When
@@ -265,7 +278,6 @@ public class GenreAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#find10LastCommentsByGenre(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("find10LastCommentsByGenre() should return a response with internal error when the External Service returns  4xx or 5xx status code")
 	public void find10LastCommentsByGenre_should_return_internal_error_when_bodyToFlux_throws_WebClientResponseException() {
@@ -278,13 +290,17 @@ public class GenreAPITest {
 				.build();
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
 
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/last10")).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/last10")).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
+
+		given(commentClient.get10LastComments()).willThrow(WebClientResponseException.class);
 
 		// When // Then
 		webTestClient.get()

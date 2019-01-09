@@ -2,7 +2,6 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 import java.util.Optional;
 
@@ -16,10 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
-import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
-import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
@@ -43,13 +38,12 @@ public class ArtistAPITest {
 	private ArtistRepository artistRepository;
 
 	@MockBean
-	private WebClient webClient;
+	private CommentClient commentClient;
 
 	/**
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return the artist linked to its 10 last comments when the External Service returns the comments")
 	public void findByIdWith10LastComments_should_return_artist_linked_to_10_last_comments_when_external_service_returns_comments() {
@@ -63,13 +57,18 @@ public class ArtistAPITest {
 		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
 
 		final Comment comment = new Comment(new Artist(), "user name", "message");
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/{artistId}/last10", id)).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(comment));
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/{artistId}/last10",
+		// id)).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(comment));
+
+		given(commentClient.get10LastCommentsOfArtist(id)).willReturn(Flux.just(comment));
 
 		// When
 		final Artist result = webTestClient.get()
@@ -91,7 +90,6 @@ public class ArtistAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return the artist with a empty list of comments when the External Service returns a empty list of comments")
 	public void findByIdWith10LastComments_should_return_artist_with_empty_comments_when_external_service_returns_NO_comments() {
@@ -104,13 +102,18 @@ public class ArtistAPITest {
 				.build();
 		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
 
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/{artistId}/last10", id)).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.empty());
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/{artistId}/last10",
+		// id)).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.empty());
+
+		given(commentClient.get10LastCommentsOfArtist(id)).willReturn(Flux.empty());
 
 		// When
 		final Artist result = webTestClient.get()
@@ -132,7 +135,6 @@ public class ArtistAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return a response with internal error when the External Service returns 4xx or 5xx status code")
 	public void findByIdWith10LastComments_should_return_internal_error_when_bodyToFlux_throws_WebClientResponseException() {
@@ -145,13 +147,18 @@ public class ArtistAPITest {
 				.build();
 		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
 
-		final RequestHeadersUriSpec headersUriSpec = mock(RequestHeadersUriSpec.class);
-		final RequestHeadersSpec headersSpec = mock(RequestHeadersSpec.class);
-		final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		given(webClient.get()).willReturn(headersUriSpec);
-		given(headersUriSpec.uri("/comments/{artistId}/last10", id)).willReturn(headersSpec);
-		given(headersSpec.retrieve()).willReturn(responseSpec);
-		given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
+		// final RequestHeadersUriSpec headersUriSpec =
+		// mock(RequestHeadersUriSpec.class);
+		// final RequestHeadersSpec headersSpec =
+		// mock(RequestHeadersSpec.class);
+		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
+		// given(webClient.get()).willReturn(headersUriSpec);
+		// given(headersUriSpec.uri("/comments/{artistId}/last10",
+		// id)).willReturn(headersSpec);
+		// given(headersSpec.retrieve()).willReturn(responseSpec);
+		// given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
+
+		given(commentClient.get10LastCommentsOfArtist(id)).willThrow(WebClientResponseException.class);
 
 		// When // Then
 		webTestClient.get()

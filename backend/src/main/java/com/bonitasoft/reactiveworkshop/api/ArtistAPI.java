@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.artist.ArtistViews;
@@ -19,15 +18,13 @@ import reactor.core.publisher.Mono;
 @RestController
 public class ArtistAPI {
 
-	private static final String ENDPOINT_10_LAST_COMMENTS_BY_ARTIST = "/comments/{artistId}/last10";
-
 	private final ArtistRepository artistRepository;
 
-	private final WebClient webClient;
+	private final CommentClient commentClient;
 
-	public ArtistAPI(final ArtistRepository artistRepository, final WebClient webClient) {
+	public ArtistAPI(final ArtistRepository artistRepository, final CommentClient commentClient) {
 		this.artistRepository = artistRepository;
-		this.webClient = webClient;
+		this.commentClient = commentClient;
 	}
 
 	@JsonView(ArtistViews.WithoutComments.class)
@@ -56,11 +53,7 @@ public class ArtistAPI {
 	@GetMapping("/artist/{id}/comments")
 	public Mono<Artist> findByIdWith10LastComments(@PathVariable final String id) throws NotFoundException {
 		final Mono<Artist> artistFlux = Mono.just(findById(id));
-		final Mono<List<Comment>> commentsFlux = webClient.get()
-				.uri(ENDPOINT_10_LAST_COMMENTS_BY_ARTIST, id)
-				.retrieve()
-				.bodyToFlux(Comment.class)
-				.log()
+		final Mono<List<Comment>> commentsFlux = commentClient.get10LastCommentsOfArtist(id)
 				.collectList();
 
 		// The zip method allows to easily combine the results of several Mono

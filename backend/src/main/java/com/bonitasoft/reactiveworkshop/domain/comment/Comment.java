@@ -3,7 +3,6 @@ package com.bonitasoft.reactiveworkshop.domain.comment;
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.artist.ArtistViews;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -20,7 +19,6 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder(value = {"artistId", "artistName", "userName", "comment"})
 public class Comment {
 
 	@ToString.Exclude
