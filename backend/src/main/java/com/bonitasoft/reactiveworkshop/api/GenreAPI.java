@@ -60,7 +60,7 @@ public class GenreAPI {
 	@GetMapping(path = "/genre/{genre}/comments/stream", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
 	public Flux<Comment> getStreamOfCommentByGenre(@PathVariable final String genre) {
 		return commentClient.getCommentsStream()
-				.transform(filterCommentsByGenreAndLinkWithArtist(genre));
+				.transform(filterByGenreAndLinkToArtist(genre));
 	}
 
 	/**
@@ -75,13 +75,13 @@ public class GenreAPI {
 	public Flux<Comment> find10LastCommentsByGenre(@PathVariable final String genre) {
 		final Mono<Comment> fallback = Mono.error(NotFoundException::new);
 		return commentClient.get10LastComments()
-				.transform(filterCommentsByGenreAndLinkWithArtist(genre))
+				.transform(filterByGenreAndLinkToArtist(genre))
 				.repeat()
 				.take(10)
 				.timeout(Duration.ofMinutes(2), fallback);
 	}
 
-	private Function<Flux<Comment>, Flux<Comment>> filterCommentsByGenreAndLinkWithArtist(final String genre) {
+	private Function<Flux<Comment>, Flux<Comment>> filterByGenreAndLinkToArtist(final String genre) {
 		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
 
 		return f -> f.filter(comment -> {
