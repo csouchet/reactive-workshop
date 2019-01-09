@@ -1,5 +1,6 @@
 package com.bonitasoft.reactiveworkshop.api;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +16,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.domain.comment.CommentsViews;
+import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @Slf4j
@@ -82,6 +85,8 @@ public class GenreAPI {
 	public Flux<Comment> find10LastCommentsByGenre(@PathVariable final String genre) {
 		final Map<String, Artist> filteredArtistsById = getFilteredArtistsById(genre);
 
+		final Mono<Comment> fallback = Mono.error(NotFoundException::new);
+
 		return webClient.get()
 				.uri(ENDPOINT_COMMENTS_LAST10)
 				.retrieve()
@@ -96,7 +101,8 @@ public class GenreAPI {
 				})
 				.log()
 				.repeat()
-				.take(10);
+				.take(10)
+				.timeout(Duration.ofMinutes(2), fallback);
 	}
 
 	private Map<String, Artist> getFilteredArtistsById(final String genre) {
