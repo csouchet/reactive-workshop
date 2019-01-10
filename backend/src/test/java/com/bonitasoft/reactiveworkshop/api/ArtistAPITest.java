@@ -80,7 +80,6 @@ public class ArtistAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return the artist with a empty list of comments when the External Service returns a empty list of comments")
 	public void findByIdWith10LastComments_should_return_artist_with_empty_comments_when_external_service_returns_NO_comments() {
@@ -115,7 +114,6 @@ public class ArtistAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return a 404 response when the External Service returns 4xx or 5xx status code")
 	public void findByIdWith10LastComments_should_return_404_status_when_bodyToFlux_returns_NotFoundException() {
@@ -146,7 +144,6 @@ public class ArtistAPITest {
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
 	@DisplayName("findByIdWith10LastComments() should return a 404 response when there is no artist corresponding to the id")
 	public void findByIdWith10LastComments_should_return_404_status_when_artist_NOT_exist() {
