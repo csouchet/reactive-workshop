@@ -59,8 +59,9 @@ public class GenreAPI {
 	@JsonView(CommentsViews.ByGenre.class)
 	@GetMapping(path = "/genre/{genre}/comments/stream", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
 	public Flux<Comment> getStreamOfCommentByGenre(@PathVariable final String genre) {
+		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
 		return commentClient.getCommentsStream()
-				.transform(filterByGenreAndLinkToArtist(genre));
+				.transform(filterAndLinkToArtist(artistsWithGenreById));
 	}
 
 	/**
@@ -73,24 +74,23 @@ public class GenreAPI {
 	@JsonView(CommentsViews.ByGenre.class)
 	@GetMapping("/genre/{genre}/comments")
 	public Flux<Comment> find10LastCommentsByGenre(@PathVariable final String genre) {
+		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
 		final Mono<Comment> fallback = Mono.error(NotFoundException::new);
 		return commentClient.get10LastComments()
-				.transform(filterByGenreAndLinkToArtist(genre))
+				.transform(filterAndLinkToArtist(artistsWithGenreById))
 				.repeat()
 				.take(10)
 				.timeout(Duration.ofMinutes(2), fallback);
 	}
 
-	private Function<Flux<Comment>, Flux<Comment>> filterByGenreAndLinkToArtist(final String genre) {
-		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
-
+	private static Function<Flux<Comment>, Flux<Comment>> filterAndLinkToArtist(final Map<String, Artist> artistsById) {
 		return f -> f.filter(comment -> {
-			final Artist artist = getArtist(artistsWithGenreById, comment);
+			final Artist artist = getArtist(artistsById, comment);
 			return artist != null && !artist.getComments()
 					.contains(comment);
 		})
 				.map(comment -> {
-					final Artist artist = getArtist(artistsWithGenreById, comment);
+					final Artist artist = getArtist(artistsById, comment);
 					artist.addComment(comment);
 					return comment;
 				});
@@ -107,13 +107,13 @@ public class GenreAPI {
 		return mappingFilteredArtistById;
 	}
 
-	private static Artist getArtist(final Map<String, Artist> filteredArtistsById, final Comment comment) {
+	private static Artist getArtist(final Map<String, Artist> artistsById, final Comment comment) {
 		final String artistId = comment.getArtist()
 				.getId();
 		if (log.isDebugEnabled()) {
 			log.debug("comment = " + comment + ", artistId = " + artistId);
 		}
-		return filteredArtistsById.get(artistId);
+		return artistsById.get(artistId);
 	}
 
 }
