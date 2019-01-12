@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id "com.palantir.docker-run" version "0.20.1"
+    id "com.palantir.docker-run" version "0.21.0"
 }
 
 apply plugin: 'java'
@@ -35,7 +35,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.4'
     compile 'com.opencsv:opencsv:4.4'
 
-    compile 'com.h2database:h2:1.4.197'
+//    compile 'com.h2database:h2:1.4.197'
 //    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
 //    implementation('org.springframework.boot:spring-boot-starter-web')
 
@@ -63,6 +63,7 @@ dockerRun {
     name 'mongo'
     image 'mongo'
     ports '27017:27017'  
-    env 'mongo': '3.2' 
+    env 'mongo': 'latest' 
+//    clean true 
     command 'sleep', '100'
 }
