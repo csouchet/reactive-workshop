@@ -21,14 +21,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
+import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.publisher.TestPublisher;
 
 /**
  * @author SOUCHET Céline
@@ -183,8 +184,8 @@ public class GenreAPITest {
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
 	 */
 	@Test
-	@DisplayName("getStreamOfCommentByGenre() should return a response with internal error when the External Service returns  4xx or 5xx status code")
-	public void getStreamOfCommentByGenre_should_return_internal_error_when_bodyToFlux_throws_WebClientResponseException() {
+	@DisplayName("getStreamOfCommentByGenre() should return a 404 response when the External Service returns 4xx or 5xx status code")
+	public void getStreamOfCommentByGenre_should_return_404_status_when_bodyToFlux_returns_NotFoundException() {
 		// Given
 		final String genre = "genre";
 		final Artist artist = Artist.builder()
@@ -204,7 +205,10 @@ public class GenreAPITest {
 		// given(headersSpec.retrieve()).willReturn(responseSpec);
 		// given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
 
-		given(commentClient.getCommentsStream()).willThrow(WebClientResponseException.class);
+		final Flux<Comment> flux = TestPublisher.<Comment>create()
+				.error(new NotFoundException())
+				.flux();
+		given(commentClient.getCommentsStream()).willReturn(flux);
 
 		// When // Then
 		webTestClient.get()
@@ -212,7 +216,7 @@ public class GenreAPITest {
 				.accept(MediaType.APPLICATION_STREAM_JSON)
 				.exchange()
 				.expectStatus()
-				.is5xxServerError();
+				.is4xxClientError();
 	}
 
 	/**
@@ -279,8 +283,8 @@ public class GenreAPITest {
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#find10LastCommentsByGenre(java.lang.String)}.
 	 */
 	@Test
-	@DisplayName("find10LastCommentsByGenre() should return a response with internal error when the External Service returns  4xx or 5xx status code")
-	public void find10LastCommentsByGenre_should_return_internal_error_when_bodyToFlux_throws_WebClientResponseException() {
+	@DisplayName("find10LastCommentsByGenre() should return a 404 response when the External Service returns 4xx or 5xx status code")
+	public void find10LastCommentsByGenre_should_return_404_status_when_bodyToFlux_returns_NotFoundException() {
 		// Given
 		final String genre = "genre";
 		final Artist artist = Artist.builder()
@@ -300,7 +304,10 @@ public class GenreAPITest {
 		// given(headersSpec.retrieve()).willReturn(responseSpec);
 		// given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
 
-		given(commentClient.get10LastComments()).willThrow(WebClientResponseException.class);
+		final Flux<Comment> flux = TestPublisher.<Comment>create()
+				.error(new NotFoundException())
+				.flux();
+		given(commentClient.get10LastComments()).willReturn(flux);
 
 		// When // Then
 		webTestClient.get()
@@ -308,7 +315,7 @@ public class GenreAPITest {
 				.accept(MediaType.APPLICATION_JSON)
 				.exchange()
 				.expectStatus()
-				.is5xxServerError();
+				.is4xxClientError();
 	}
 
 	private static Comment generateComment() {

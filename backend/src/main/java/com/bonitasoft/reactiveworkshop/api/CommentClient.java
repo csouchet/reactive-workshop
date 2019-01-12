@@ -3,12 +3,18 @@
  */
 package com.bonitasoft.reactiveworkshop.api;
 
+import java.util.function.Function;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
+import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * @author SOUCHET Céline
@@ -57,11 +63,13 @@ public class CommentClient {
 	}
 
 	private Flux<Comment> getComments(final String uri, final Object... uriVariables) {
+		final Function<ClientResponse, Mono<? extends Throwable>> fallbackFunction = clientResponse -> Mono.error(new NotFoundException(
+				"Not possible to get comments from the external service" + clientResponse.statusCode()));
 		return webClient.get()
 				.uri(uri, uriVariables)
 				.retrieve()
+				.onStatus(HttpStatus::isError, fallbackFunction)
 				.bodyToFlux(Comment.class)
 				.log();
 	}
-
 }

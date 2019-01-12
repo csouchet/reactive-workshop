@@ -15,13 +15,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
+import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 
 import reactor.core.publisher.Flux;
+import reactor.test.publisher.TestPublisher;
 
 /**
  * @author SOUCHET Céline
@@ -57,17 +58,6 @@ public class ArtistAPITest {
 		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
 
 		final Comment comment = new Comment(new Artist(), "user name", "message");
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/{artistId}/last10",
-		// id)).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(comment));
-
 		given(commentClient.get10LastCommentsOfArtist(id)).willReturn(Flux.just(comment));
 
 		// When
@@ -102,17 +92,6 @@ public class ArtistAPITest {
 				.build();
 		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
 
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/{artistId}/last10",
-		// id)).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.empty());
-
 		given(commentClient.get10LastCommentsOfArtist(id)).willReturn(Flux.empty());
 
 		// When
@@ -136,8 +115,8 @@ public class ArtistAPITest {
 	 * {@link com.bonitasoft.reactiveworkshop.api.ArtistAPI#findByIdWith10LastComments(java.lang.String)}.
 	 */
 	@Test
-	@DisplayName("findByIdWith10LastComments() should return a response with internal error when the External Service returns 4xx or 5xx status code")
-	public void findByIdWith10LastComments_should_return_internal_error_when_bodyToFlux_throws_WebClientResponseException() {
+	@DisplayName("findByIdWith10LastComments() should return a 404 response when the External Service returns 4xx or 5xx status code")
+	public void findByIdWith10LastComments_should_return_404_status_when_bodyToFlux_returns_NotFoundException() {
 		// Given
 		final String id = "2";
 		final Artist artist = Artist.builder()
@@ -147,18 +126,10 @@ public class ArtistAPITest {
 				.build();
 		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
 
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/{artistId}/last10",
-		// id)).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
-
-		given(commentClient.get10LastCommentsOfArtist(id)).willThrow(WebClientResponseException.class);
+		final Flux<Comment> flux = TestPublisher.<Comment>create()
+				.error(new NotFoundException())
+				.flux();
+		given(commentClient.get10LastCommentsOfArtist(id)).willReturn(flux);
 
 		// When // Then
 		webTestClient.get()
@@ -166,7 +137,7 @@ public class ArtistAPITest {
 				.accept(MediaType.APPLICATION_JSON)
 				.exchange()
 				.expectStatus()
-				.is5xxServerError();
+				.isNotFound();
 	}
 
 	/**
