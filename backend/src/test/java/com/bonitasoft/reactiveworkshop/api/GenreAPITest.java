@@ -48,9 +48,6 @@ public class GenreAPITest {
 	@MockBean
 	private CommentClient commentClient;
 
-	// @MockBean
-	// private WebClient webClient;
-
 	/**
 	 * Test method for
 	 * {@link com.bonitasoft.reactiveworkshop.api.GenreAPI#getStreamOfCommentByGenre(java.lang.String)}.
@@ -68,15 +65,6 @@ public class GenreAPITest {
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
 
 		final Comment comment = generateComment();
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(comment));
 		given(commentClient.getCommentsStream()).willReturn(Flux.just(comment));
 
 		// When
@@ -108,16 +96,6 @@ public class GenreAPITest {
 		// Given
 		final String genre = "genre";
 		given(artistRepository.findAllByGenre(genre)).willReturn(new ArrayList<>());
-
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(generateComment()));
 
 		given(commentClient.getCommentsStream()).willReturn(Flux.just(generateComment()));
 
@@ -152,16 +130,6 @@ public class GenreAPITest {
 				.build();
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
 
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.empty());
-
 		given(commentClient.getCommentsStream()).willReturn(Flux.empty());
 
 		// When
@@ -194,16 +162,6 @@ public class GenreAPITest {
 				.genre("genre")
 				.build();
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
-
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/stream")).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
 
 		final Flux<Comment> flux = TestPublisher.<Comment>create()
 				.error(new NotFoundException())
@@ -244,16 +202,6 @@ public class GenreAPITest {
 		});
 		final Flux<Comment> comments = Flux.just(comment, comment, commentWithWrongArtist)
 				.mergeWith(randomComment.repeat(7));
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/last10")).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(comments)
-		// .willReturn(randomComment.repeat(10));
 
 		given(commentClient.get10LastComments()).willReturn(comments)
 				.willReturn(randomComment.repeat(10));
@@ -293,16 +241,6 @@ public class GenreAPITest {
 				.genre("genre")
 				.build();
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
-
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/last10")).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willThrow(WebClientResponseException.class);
 
 		final Flux<Comment> flux = TestPublisher.<Comment>create()
 				.error(new NotFoundException())
