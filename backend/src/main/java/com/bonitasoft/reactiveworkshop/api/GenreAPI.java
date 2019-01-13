@@ -2,7 +2,6 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -37,13 +36,12 @@ public class GenreAPI {
 	}
 
 	@GetMapping("/genres")
-	public Mono<List<String>> findAll() {
+	public Flux<String> findAll() {
 		return artistRepository.findAll()
 				.map(Artist::getGenre)
 				.filter(g -> !g.isEmpty())
 				.distinct()
-				.sort()
-				.collectList();
+				.sort();
 	}
 
 	/**
