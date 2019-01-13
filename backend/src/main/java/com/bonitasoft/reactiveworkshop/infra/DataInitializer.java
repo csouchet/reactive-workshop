@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -17,6 +15,8 @@ import org.springframework.stereotype.Component;
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 import com.opencsv.CSVReader;
+
+import reactor.core.publisher.Flux;
 
 @Component
 public class DataInitializer implements ApplicationListener<ApplicationReadyEvent> {
@@ -29,7 +29,8 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
 
 	@Override
 	public void onApplicationEvent(final ApplicationReadyEvent event) {
-		repository.deleteAll();
+		repository.deleteAll()
+				.subscribe();
 
 		final List<Artist> allArtists = new ArrayList<>();
 		try (CSVReader reader = new CSVReader(new InputStreamReader(DataInitializer.class.getResourceAsStream("/artists_genre.csv")))) {
@@ -43,30 +44,19 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
 						.genre(line[4].trim())
 						.build();
 				allArtists.add(artist);
-
 			}
 		} catch (final IOException e) {
 			throw new IllegalStateException(e);
 		}
-		final Set<String> artistIds = new HashSet<>();
 
-		allArtists.stream()
-				.filter(a -> artistIds.add(a.getId()))
-				.forEach(repository::save);
-		// Flux.fromIterable(allArtists)
-		// .distinct(Artist::getId)
-		// .subscribe(repository::save);
-		// .subscribe(repository::insert);
-		// .deleteAll()
-		// .thenMany(
-		// Flux
-		// .just("A", "B", "C", "D")
-		// .map(name -> new Profile(UUID.randomUUID().toString(), name +
-		// "@email.com"))
-		// .flatMap(repository::save)
-		// )
-		// .thenMany(repository.findAll())
-		// .subscribe(profile -> log.info("saving " + profile.toString()));
+		// final Set<String> artistIds = new HashSet<>();
+		// allArtists.stream()
+		// .filter(a -> artistIds.add(a.getId()))
+		// .forEach(repository::save);
+
+		repository.saveAll(Flux.fromIterable(allArtists)
+				.distinct(Artist::getId))
+				.subscribe();
 	}
 
 	private static String md5(final String name) {
