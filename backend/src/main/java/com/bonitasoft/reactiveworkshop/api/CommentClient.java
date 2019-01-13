@@ -32,10 +32,19 @@ public class CommentClient {
 	/**
 	 * Default constructor
 	 *
+	 */
+	public CommentClient() {
+		super();
+		webClient = WebClient.create("http://localhost:3004");
+	}
+
+	/**
+	 * For unit tests
+	 *
 	 * @param webClient
 	 *            To communicate with the external service
 	 */
-	public CommentClient(final WebClient webClient) {
+	CommentClient(final WebClient webClient) {
 		super();
 		this.webClient = webClient;
 	}
