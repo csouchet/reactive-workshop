@@ -2,8 +2,9 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,6 @@ import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 import com.bonitasoft.reactiveworkshop.service.CommentService;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,12 +37,13 @@ public class GenreAPI {
 	}
 
 	@GetMapping("/genres")
-	public Flux<String> findAll() {
+	public Mono<List<String>> findAll() {
 		return artistRepository.findAll()
 				.map(Artist::getGenre)
 				.filter(g -> !g.isEmpty())
 				.distinct()
-				.sort();
+				.sort()
+				.collectList();
 	}
 
 	/**
@@ -98,10 +99,8 @@ public class GenreAPI {
 	private Map<String, Artist> getArtistsWithGenreById(final String genre) {
 		final Map<String, Artist> mappingFilteredArtistById = new HashMap<>();
 
-		@Cleanup
-		final Stream<Artist> stream = artistRepository.findAllByGenre(genre)
-				.toStream();
-		stream.forEach(artist -> mappingFilteredArtistById.put(artist.getId(), artist));
+		artistRepository.findAllByGenre(genre)
+				.subscribe(artist -> mappingFilteredArtistById.put(artist.getId(), artist));
 
 		return mappingFilteredArtistById;
 	}
