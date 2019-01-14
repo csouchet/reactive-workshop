@@ -11,6 +11,7 @@ import com.bonitasoft.reactiveworkshop.domain.artist.ArtistViews;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
+import com.bonitasoft.reactiveworkshop.service.CommentService;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import reactor.core.publisher.Mono;
@@ -20,11 +21,11 @@ public class ArtistAPI {
 
 	private final ArtistRepository artistRepository;
 
-	private final CommentClient commentClient;
+	private final CommentService commentService;
 
-	public ArtistAPI(final ArtistRepository artistRepository, final CommentClient commentClient) {
+	public ArtistAPI(final ArtistRepository artistRepository, final CommentService commentService) {
 		this.artistRepository = artistRepository;
-		this.commentClient = commentClient;
+		this.commentService = commentService;
 	}
 
 	@JsonView(ArtistViews.WithoutComments.class)
@@ -53,7 +54,7 @@ public class ArtistAPI {
 	@GetMapping("/artist/{id}/comments")
 	public Mono<Artist> findByIdWith10LastComments(@PathVariable final String id) throws NotFoundException {
 		final Mono<Artist> artistFlux = Mono.just(findById(id));
-		final Mono<List<Comment>> commentsFlux = commentClient.get10LastCommentsOfArtist(id)
+		final Mono<List<Comment>> commentsFlux = commentService.get10LastCommentsOfArtist(id)
 				.collectList();
 
 		// The zip method allows to easily combine the results of several Mono

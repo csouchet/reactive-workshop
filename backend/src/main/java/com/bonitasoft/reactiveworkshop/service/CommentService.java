@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.bonitasoft.reactiveworkshop.api;
+package com.bonitasoft.reactiveworkshop.service;
 
 import java.util.function.Function;
 
@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
  *
  */
 @Component
-public class CommentClient {
+public class CommentService {
 
 	private static final String ENDPOINT_10_LAST_COMMENTS_BY_ARTIST = "/comments/{artistId}/last10";
 	private static final String ENDPOINT_COMMENTS_STREAM = "/comments/stream";
@@ -33,7 +33,7 @@ public class CommentClient {
 	 * Default constructor
 	 *
 	 */
-	public CommentClient() {
+	public CommentService() {
 		super();
 		webClient = WebClient.create("http://localhost:3004");
 	}
@@ -44,7 +44,7 @@ public class CommentClient {
 	 * @param webClient
 	 *            To communicate with the external service
 	 */
-	CommentClient(final WebClient webClient) {
+	CommentService(final WebClient webClient) {
 		super();
 		this.webClient = webClient;
 	}
@@ -56,18 +56,18 @@ public class CommentClient {
 	 *            The identifier of the artist
 	 * @return The 10 last comments
 	 */
-	Flux<Comment> get10LastCommentsOfArtist(final String artistId) {
+	public Flux<Comment> get10LastCommentsOfArtist(final String artistId) {
 		return getComments(ENDPOINT_10_LAST_COMMENTS_BY_ARTIST, artistId);
 	}
 
 	/**
 	 * Get a stream of comments
 	 */
-	Flux<Comment> getCommentsStream() {
+	public Flux<Comment> getCommentsStream() {
 		return getComments(ENDPOINT_COMMENTS_STREAM);
 	}
 
-	Flux<Comment> get10LastComments() {
+	public Flux<Comment> get10LastComments() {
 		return getComments(ENDPOINT_COMMENTS_LAST10);
 	}
 

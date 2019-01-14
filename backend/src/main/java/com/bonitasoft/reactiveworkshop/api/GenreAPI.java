@@ -18,6 +18,7 @@ import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.domain.comment.CommentsViews;
 import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
+import com.bonitasoft.reactiveworkshop.service.CommentService;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Cleanup;
@@ -31,11 +32,11 @@ public class GenreAPI {
 
 	private final ArtistRepository artistRepository;
 
-	private final CommentClient commentClient;
+	private final CommentService commentService;
 
-	public GenreAPI(final ArtistRepository artistRepository, final CommentClient commentClient) {
+	public GenreAPI(final ArtistRepository artistRepository, final CommentService commentService) {
 		this.artistRepository = artistRepository;
-		this.commentClient = commentClient;
+		this.commentService = commentService;
 	}
 
 	@GetMapping("/genres")
@@ -60,7 +61,7 @@ public class GenreAPI {
 	@GetMapping(path = "/genre/{genre}/comments/stream", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
 	public Flux<Comment> getStreamOfCommentByGenre(@PathVariable final String genre) {
 		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
-		return commentClient.getCommentsStream()
+		return commentService.getCommentsStream()
 				.transform(filterAndLinkToArtist(artistsWithGenreById));
 	}
 
@@ -76,7 +77,7 @@ public class GenreAPI {
 	public Flux<Comment> find10LastCommentsByGenre(@PathVariable final String genre) {
 		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
 		final Mono<Comment> fallback = Mono.error(NotFoundException::new);
-		return commentClient.get10LastComments()
+		return commentService.get10LastComments()
 				.transform(filterAndLinkToArtist(artistsWithGenreById))
 				.repeat()
 				.take(10)

@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.bonitasoft.reactiveworkshop.api;
+package com.bonitasoft.reactiveworkshop.service;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -29,6 +29,7 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
+import com.bonitasoft.reactiveworkshop.service.CommentService;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -40,17 +41,17 @@ import reactor.test.publisher.TestPublisher;
  *
  */
 @ExtendWith({TestStatusLoggerExtension.class, SpringExtension.class})
-public class CommentClientTest {
+public class CommentServiceTest {
 
 	@Mock
 	private WebClient webClient;
 
 	@InjectMocks
-	private CommentClient commentClient;
+	private CommentService commentService;
 
 	/**
 	 * Test method for
-	 * {@link com.bonitasoft.reactiveworkshop.api.CommentClient#get10LastCommentsOfArtist(java.lang.String)}.
+	 * {@link com.bonitasoft.reactiveworkshop.service.CommentService#get10LastCommentsOfArtist(java.lang.String)}.
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
@@ -72,7 +73,7 @@ public class CommentClientTest {
 		given(responseSpec.bodyToFlux(Comment.class)).willReturn(commentFlux);
 
 		// When
-		final Flux<Comment> result = commentClient.get10LastCommentsOfArtist(artistId);
+		final Flux<Comment> result = commentService.get10LastCommentsOfArtist(artistId);
 
 		// Then
 		StepVerifier.create(result)
@@ -83,7 +84,7 @@ public class CommentClientTest {
 
 	/**
 	 * Test method for
-	 * {@link com.bonitasoft.reactiveworkshop.api.CommentClient#get10LastCommentsOfArtist(java.lang.String)}.
+	 * {@link com.bonitasoft.reactiveworkshop.service.CommentService#get10LastCommentsOfArtist(java.lang.String)}.
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
@@ -107,7 +108,7 @@ public class CommentClientTest {
 		given(responseSpec.bodyToFlux(Comment.class)).willReturn(flux);
 
 		// When
-		final Flux<Comment> result = commentClient.get10LastCommentsOfArtist(artistId);
+		final Flux<Comment> result = commentService.get10LastCommentsOfArtist(artistId);
 
 		// Then
 		StepVerifier.create(result)
@@ -118,7 +119,7 @@ public class CommentClientTest {
 
 	/**
 	 * Test method for
-	 * {@link com.bonitasoft.reactiveworkshop.api.CommentClient#getCommentsStream()}.
+	 * {@link com.bonitasoft.reactiveworkshop.service.CommentService#getCommentsStream()}.
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
@@ -139,7 +140,7 @@ public class CommentClientTest {
 		given(responseSpec.bodyToFlux(Comment.class)).willReturn(commentFlux);
 
 		// When
-		final Flux<Comment> result = commentClient.getCommentsStream();
+		final Flux<Comment> result = commentService.getCommentsStream();
 
 		// Then
 		StepVerifier.create(result)
@@ -150,7 +151,7 @@ public class CommentClientTest {
 
 	/**
 	 * Test method for
-	 * {@link com.bonitasoft.reactiveworkshop.api.CommentClient#getCommentsStream()}.
+	 * {@link com.bonitasoft.reactiveworkshop.service.CommentService#getCommentsStream()}.
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
@@ -172,7 +173,7 @@ public class CommentClientTest {
 		given(responseSpec.bodyToFlux(Comment.class)).willReturn(flux);
 
 		// When
-		final Flux<Comment> result = commentClient.getCommentsStream();
+		final Flux<Comment> result = commentService.getCommentsStream();
 
 		// Then
 		StepVerifier.create(result)
@@ -183,7 +184,7 @@ public class CommentClientTest {
 
 	/**
 	 * Test method for
-	 * {@link com.bonitasoft.reactiveworkshop.api.CommentClient#get10LastComments()}.
+	 * {@link com.bonitasoft.reactiveworkshop.service.CommentService#get10LastComments()}.
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
@@ -204,7 +205,7 @@ public class CommentClientTest {
 		given(responseSpec.bodyToFlux(Comment.class)).willReturn(commentFlux);
 
 		// When
-		final Flux<Comment> result = commentClient.get10LastComments();
+		final Flux<Comment> result = commentService.get10LastComments();
 
 		// Then
 		StepVerifier.create(result)
@@ -215,7 +216,7 @@ public class CommentClientTest {
 
 	/**
 	 * Test method for
-	 * {@link com.bonitasoft.reactiveworkshop.api.CommentClient#get10LastComments()}.
+	 * {@link com.bonitasoft.reactiveworkshop.service.CommentService#get10LastComments()}.
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Test
@@ -237,7 +238,7 @@ public class CommentClientTest {
 		given(responseSpec.bodyToFlux(Comment.class)).willReturn(flux);
 
 		// When
-		final Flux<Comment> result = commentClient.get10LastComments();
+		final Flux<Comment> result = commentService.get10LastComments();
 
 		// Then
 		StepVerifier.create(result)

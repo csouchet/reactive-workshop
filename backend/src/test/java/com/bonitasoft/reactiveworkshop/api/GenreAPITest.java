@@ -26,6 +26,7 @@ import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
+import com.bonitasoft.reactiveworkshop.service.CommentService;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -46,7 +47,7 @@ public class GenreAPITest {
 	private ArtistRepository artistRepository;
 
 	@MockBean
-	private CommentClient commentClient;
+	private CommentService commentService;
 
 	/**
 	 * Test method for
@@ -65,7 +66,7 @@ public class GenreAPITest {
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
 
 		final Comment comment = generateComment();
-		given(commentClient.getCommentsStream()).willReturn(Flux.just(comment));
+		given(commentService.getCommentsStream()).willReturn(Flux.just(comment));
 
 		// When
 		final List<Comment> result = webTestClient.get()
@@ -97,7 +98,7 @@ public class GenreAPITest {
 		final String genre = "genre";
 		given(artistRepository.findAllByGenre(genre)).willReturn(new ArrayList<>());
 
-		given(commentClient.getCommentsStream()).willReturn(Flux.just(generateComment()));
+		given(commentService.getCommentsStream()).willReturn(Flux.just(generateComment()));
 
 		// When
 		final List<Comment> result = webTestClient.get()
@@ -130,7 +131,7 @@ public class GenreAPITest {
 				.build();
 		given(artistRepository.findAllByGenre(genre)).willReturn(Arrays.asList(artist));
 
-		given(commentClient.getCommentsStream()).willReturn(Flux.empty());
+		given(commentService.getCommentsStream()).willReturn(Flux.empty());
 
 		// When
 		final List<Comment> result = webTestClient.get()
@@ -166,7 +167,7 @@ public class GenreAPITest {
 		final Flux<Comment> flux = TestPublisher.<Comment>create()
 				.error(new NotFoundException())
 				.flux();
-		given(commentClient.getCommentsStream()).willReturn(flux);
+		given(commentService.getCommentsStream()).willReturn(flux);
 
 		// When // Then
 		webTestClient.get()
@@ -203,7 +204,7 @@ public class GenreAPITest {
 		final Flux<Comment> comments = Flux.just(comment, comment, commentWithWrongArtist)
 				.mergeWith(randomComment.repeat(7));
 
-		given(commentClient.get10LastComments()).willReturn(comments)
+		given(commentService.get10LastComments()).willReturn(comments)
 				.willReturn(randomComment.repeat(10));
 
 		// When
@@ -245,7 +246,7 @@ public class GenreAPITest {
 		final Flux<Comment> flux = TestPublisher.<Comment>create()
 				.error(new NotFoundException())
 				.flux();
-		given(commentClient.get10LastComments()).willReturn(flux);
+		given(commentService.get10LastComments()).willReturn(flux);
 
 		// When // Then
 		webTestClient.get()

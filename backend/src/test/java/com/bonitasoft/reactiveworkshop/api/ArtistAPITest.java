@@ -20,6 +20,7 @@ import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
+import com.bonitasoft.reactiveworkshop.service.CommentService;
 
 import reactor.core.publisher.Flux;
 import reactor.test.publisher.TestPublisher;
@@ -39,7 +40,7 @@ public class ArtistAPITest {
 	private ArtistRepository artistRepository;
 
 	@MockBean
-	private CommentClient commentClient;
+	private CommentService commentService;
 
 	/**
 	 * Test method for
@@ -58,7 +59,7 @@ public class ArtistAPITest {
 		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
 
 		final Comment comment = new Comment(new Artist(), "user name", "message");
-		given(commentClient.get10LastCommentsOfArtist(id)).willReturn(Flux.just(comment));
+		given(commentService.get10LastCommentsOfArtist(id)).willReturn(Flux.just(comment));
 
 		// When
 		final Artist result = webTestClient.get()
@@ -92,7 +93,7 @@ public class ArtistAPITest {
 				.build();
 		given(artistRepository.findById(id)).willReturn(Optional.of(artist));
 
-		given(commentClient.get10LastCommentsOfArtist(id)).willReturn(Flux.empty());
+		given(commentService.get10LastCommentsOfArtist(id)).willReturn(Flux.empty());
 
 		// When
 		final Artist result = webTestClient.get()
@@ -129,7 +130,7 @@ public class ArtistAPITest {
 		final Flux<Comment> flux = TestPublisher.<Comment>create()
 				.error(new NotFoundException())
 				.flux();
-		given(commentClient.get10LastCommentsOfArtist(id)).willReturn(flux);
+		given(commentService.get10LastCommentsOfArtist(id)).willReturn(flux);
 
 		// When // Then
 		webTestClient.get()
