@@ -38,11 +38,14 @@ dependencies {
     // uncomment these line to use webflux (reactive) instead of normal web
 //    implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
     implementation('org.springframework.boot:spring-boot-starter-webflux')
+
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('io.projectreactor:reactor-test')
+    testImplementation project(':external-service')
     testImplementation('org.csouchet.test:utils-junit5-mockito2:0.0.1') {
         transitive = true
     }
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
