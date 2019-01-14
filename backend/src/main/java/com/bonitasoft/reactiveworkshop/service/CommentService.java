@@ -6,7 +6,7 @@ package com.bonitasoft.reactiveworkshop.service;
 import java.util.function.Function;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
  * @author SOUCHET Céline
  *
  */
-@Component
+@Service
 public class CommentService {
 
 	private static final String ENDPOINT_10_LAST_COMMENTS_BY_ARTIST = "/comments/{artistId}/last10";
