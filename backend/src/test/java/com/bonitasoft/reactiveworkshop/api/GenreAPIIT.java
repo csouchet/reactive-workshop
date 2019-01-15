@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.csouchet.test.extension.TestStatusLoggerExtension;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,7 @@ import com.bonitasoft.reactiveworkshop.external.ExternalApplication;
  * @author SOUCHET Céline
  *
  */
+@Disabled
 @ExtendWith({TestStatusLoggerExtension.class, SpringExtension.class})
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = {ReactiveWorkshopApplication.class})
 public class GenreAPIIT {
