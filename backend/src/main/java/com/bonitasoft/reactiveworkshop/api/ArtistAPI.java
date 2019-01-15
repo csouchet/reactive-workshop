@@ -59,7 +59,7 @@ public class ArtistAPI {
 
 		// The zip method allows to easily combine the results of several Mono
 		// with the great benefit that the execution of your zip method will
-		// last as much as the longest Mono , not the sum of all the executions.
+		// last as much as the longest Mono, not the sum of all the executions.
 		return artistFlux.zipWith(commentsFlux)
 				.map(tuple -> updateArtist(tuple.getT1(), tuple.getT2()));
 	}

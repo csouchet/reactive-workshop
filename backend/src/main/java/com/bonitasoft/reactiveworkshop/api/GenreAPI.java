@@ -2,6 +2,7 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 @RestController
 @Slf4j
@@ -54,8 +56,9 @@ public class GenreAPI {
 	@JsonView(CommentsViews.ByGenre.class)
 	@GetMapping(path = "/genre/{genre}/comments/stream", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
 	public Flux<Comment> getStreamOfCommentByGenre(@PathVariable final String genre) {
-		return commentService.getCommentsStream()
-				.transform(filterByGenreAndLinkCommentToArtist(genre));
+	    final Flux<Artist> artistsWithGenreById = artistRepository.findAllByGenre(genre);
+        final Flux<Comment> commentsFlux =   commentService.getCommentsStream();
+		return commentsFlux.zipWith(artistsWithGenreById).transform(filterAndLinkToArtist());
 	}
 
 	/**
@@ -68,40 +71,39 @@ public class GenreAPI {
 	@JsonView(CommentsViews.ByGenre.class)
 	@GetMapping("/genre/{genre}/comments")
 	public Flux<Comment> find10LastCommentsByGenre(@PathVariable final String genre) {
+		final Flux<Artist> artistsWithGenreById = artistRepository.findAllByGenre(genre);
+		final Flux<Comment> commentsFlux =  commentService.get10LastComments();
 		final Mono<Comment> fallback = Mono.error(NotFoundException::new);
-		return commentService.get10LastComments()
-				.transform(filterByGenreAndLinkCommentToArtist(genre))
-				.repeat()
-				.take(10)
-				.timeout(Duration.ofMinutes(2), fallback);
+		
+		
+		// The zip method allows to easily combine the results of several Mono
+        // with the great benefit that the execution of your zip method will
+        // last as much as the longest Mono, not the sum of all the executions.
+        return commentsFlux.zipWith(artistsWithGenreById).transform(filterAndLinkToArtist()).repeat().take(10)
+                .timeout(Duration.ofMinutes(2), fallback);
 	}
 
-	private Function<Flux<Comment>, Flux<Comment>> filterByGenreAndLinkCommentToArtist(final String genre) {
-		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
-		return f -> f.filter(comment -> commentHasArtistOfGenreAndArtistDoesNotContainComment(artistsWithGenreById, comment))
-				.map(comment -> updateComment(artistsWithGenreById, comment));
+	private static Function<Flux<Tuple2< Comment, Artist>>, Flux<Comment>> filterAndLinkToArtist() {
+		return f -> f.filter(tuple -> {
+            final Artist artist = tuple.getT2();
+            final Comment comment = tuple.getT1();
+            
+            String artistIdOfComment = comment.getArtist().getId(); 
+            if (log.isDebugEnabled()) {
+                log.debug("comment = " + comment + ", artistId = " + artistIdOfComment);
+            }
+            
+            return artist.getId().equals(artistIdOfComment) && !artist.getComments()
+                    .contains(comment);
+        })
+                .map(tuple -> updateComment(tuple.getT1(), tuple.getT2()));
 	}
 
-	private static boolean commentHasArtistOfGenreAndArtistDoesNotContainComment(final Map<String, Artist> artistsById, final Comment comment) {
-		final Artist artist = getArtist(artistsById, comment);
-		return artist != null && !artist.getComments()
-				.contains(comment);
-	}
+    private static Comment updateComment(final Comment comment, final Artist artist) {
+        artist.addComment(comment);
+        return comment;
+    }
 
-	private static Comment updateComment(final Map<String, Artist> artistsById, final Comment comment) {
-		final Artist artist = getArtist(artistsById, comment);
-		artist.addComment(comment);
-		return comment;
-	}
-
-	private Map<String, Artist> getArtistsWithGenreById(final String genre) {
-		final Map<String, Artist> mappingFilteredArtistById = new HashMap<>();
-
-		artistRepository.findAllByGenre(genre)
-				.subscribe(artist -> mappingFilteredArtistById.put(artist.getId(), artist));
-
-		return mappingFilteredArtistById;
-	}
 
 	private static Artist getArtist(final Map<String, Artist> artistsById, final Comment comment) {
 		final String artistId = comment.getArtist()
