@@ -19,9 +19,7 @@ import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 import com.opencsv.CSVReader;
 
 @Component
-public class DataInitializer
-		implements
-			ApplicationListener<ApplicationReadyEvent> {
+public class DataInitializer implements ApplicationListener<ApplicationReadyEvent> {
 
 	private final ArtistRepository repository;
 
@@ -34,15 +32,16 @@ public class DataInitializer
 		repository.deleteAll();
 
 		final List<Artist> allArtists = new ArrayList<>();
-		try (CSVReader reader = new CSVReader(
-				new InputStreamReader(DataInitializer.class
-						.getResourceAsStream("/artists_genre.csv")))) {
+		try (CSVReader reader = new CSVReader(new InputStreamReader(DataInitializer.class.getResourceAsStream("/artists_genre.csv")))) {
 			String[] line;
 			while ((line = reader.readNext()) != null) {
 				// name,facebook,twitter,website,genre,mtv
 				final String name = line[0].trim();
-				final Artist artist = Artist.builder().id(md5(name)).name(name)
-						.genre(line[4].trim()).build();
+				final Artist artist = Artist.builder()
+						.id(md5(name))
+						.name(name)
+						.genre(line[4].trim())
+						.build();
 				allArtists.add(artist);
 
 			}
@@ -51,7 +50,8 @@ public class DataInitializer
 		}
 		final Set<String> artistIds = new HashSet<>();
 
-		allArtists.stream().filter(a -> artistIds.add(a.getId()))
+		allArtists.stream()
+				.filter(a -> artistIds.add(a.getId()))
 				.forEach(repository::save);
 		// Flux.fromIterable(allArtists)
 		// .distinct(Artist::getId)

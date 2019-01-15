@@ -83,21 +83,22 @@ public class GenreAPI {
 	}
 
 	private Function<Flux<Comment>, Flux<Comment>> filterByGenreAndLinkCommentToArtist(final String genre) {
-	    final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
-		return f -> f.filter(comment ->  commentHasArtistOfGenreAndArtistDoesNotContainComment(artistsWithGenreById, comment))
+		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
+		return f -> f.filter(comment -> commentHasArtistOfGenreAndArtistDoesNotContainComment(artistsWithGenreById, comment))
 				.map(comment -> updateComment(artistsWithGenreById, comment));
 	}
 
 	private static boolean commentHasArtistOfGenreAndArtistDoesNotContainComment(final Map<String, Artist> artistsById, Comment comment) {
-        final Artist artist = getArtist(artistsById, comment);
-        return artist != null && !artist.getComments().contains(comment);
-    }
+		final Artist artist = getArtist(artistsById, comment);
+		return artist != null && !artist.getComments()
+				.contains(comment);
+	}
 
-    private static Comment updateComment(final Map<String, Artist> artistsById, Comment comment) {
-        final Artist artist = getArtist(artistsById, comment);
-        artist.addComment(comment);
-        return comment;
-    }
+	private static Comment updateComment(final Map<String, Artist> artistsById, Comment comment) {
+		final Artist artist = getArtist(artistsById, comment);
+		artist.addComment(comment);
+		return comment;
+	}
 
 	private Map<String, Artist> getArtistsWithGenreById(final String genre) {
 		final Map<String, Artist> mappingFilteredArtistById = new HashMap<>();

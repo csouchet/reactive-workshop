@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 public class ExceptionHandlers {
 
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(value = NOT_FOUND)
-    public void handleNotFoundException(NotFoundException e) {
-        // no content
-    }
+	@ExceptionHandler(NotFoundException.class)
+	@ResponseStatus(value = NOT_FOUND)
+	public void handleNotFoundException(NotFoundException e) {
+		// no content
+	}
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = INTERNAL_SERVER_ERROR)
-    public void handleThrowable(Exception e) {
-        log.error("Error while processing", e);
-        // no content
-    }
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(value = INTERNAL_SERVER_ERROR)
+	public void handleThrowable(Exception e) {
+		log.error("Error while processing", e);
+		// no content
+	}
 
 }

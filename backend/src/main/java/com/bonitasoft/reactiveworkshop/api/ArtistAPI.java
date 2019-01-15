@@ -64,9 +64,9 @@ public class ArtistAPI {
 				.map(tuple -> updateArtist(tuple.getT1(), tuple.getT2()));
 	}
 
-    private static Artist updateArtist(final Artist artist, final List<Comment> comments) {
-        artist.setComments(comments);
-        return artist;
-    }
+	private static Artist updateArtist(final Artist artist, final List<Comment> comments) {
+		artist.setComments(comments);
+		return artist;
+	}
 
 }
