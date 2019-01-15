@@ -41,7 +41,9 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('io.projectreactor:reactor-test')
+    
     testImplementation project(':external-service')
+    
     testImplementation('org.csouchet.test:utils-junit5-mockito2:0.0.1') {
         transitive = true
     }
