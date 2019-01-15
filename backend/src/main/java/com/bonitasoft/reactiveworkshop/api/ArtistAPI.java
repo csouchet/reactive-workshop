@@ -61,12 +61,12 @@ public class ArtistAPI {
 		// with the great benefit that the execution of your zip method will
 		// last as much as the longest Mono , not the sum of all the executions.
 		return artistFlux.zipWith(commentsFlux)
-				.map(tuple -> {
-					final Artist artist = tuple.getT1();
-					final List<Comment> comments = tuple.getT2();
-					artist.setComments(comments);
-					return artist;
-				});
+				.map(tuple -> updateArtist(tuple.getT1(), tuple.getT2()));
 	}
+
+    private static Artist updateArtist(final Artist artist, final List<Comment> comments) {
+        artist.setComments(comments);
+        return artist;
+    }
 
 }
