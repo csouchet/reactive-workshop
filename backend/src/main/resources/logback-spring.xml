@@ -14,6 +14,7 @@
 	<logger name="org.springframework" level="WARN" />
 
 	<!-- DB -->
+	<logger name="org.mongodb" level="WARN" />
 	<logger name="org.hibernate" level="WARN" />
 	<logger name="org.hibernate.SQL" level="INFO" />
 	<!-- <logger name="org.hibernate.type" level="TRACE" /> -->
