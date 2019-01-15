@@ -60,9 +60,8 @@ public class GenreAPI {
 	@JsonView(CommentsViews.ByGenre.class)
 	@GetMapping(path = "/genre/{genre}/comments/stream", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
 	public Flux<Comment> getStreamOfCommentByGenre(@PathVariable final String genre) {
-		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
 		return commentService.getCommentsStream()
-				.transform(filterAndLinkToArtist(artistsWithGenreById));
+				.transform(filterByGenreAndLinkCommentToArtist(genre));
 	}
 
 	/**
@@ -75,27 +74,30 @@ public class GenreAPI {
 	@JsonView(CommentsViews.ByGenre.class)
 	@GetMapping("/genre/{genre}/comments")
 	public Flux<Comment> find10LastCommentsByGenre(@PathVariable final String genre) {
-		final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
 		final Mono<Comment> fallback = Mono.error(NotFoundException::new);
 		return commentService.get10LastComments()
-				.transform(filterAndLinkToArtist(artistsWithGenreById))
+				.transform(filterByGenreAndLinkCommentToArtist(genre))
 				.repeat()
 				.take(10)
 				.timeout(Duration.ofMinutes(2), fallback);
 	}
 
-	private static Function<Flux<Comment>, Flux<Comment>> filterAndLinkToArtist(final Map<String, Artist> artistsById) {
-		return f -> f.filter(comment -> {
-			final Artist artist = getArtist(artistsById, comment);
-			return artist != null && !artist.getComments()
-					.contains(comment);
-		})
-				.map(comment -> {
-					final Artist artist = getArtist(artistsById, comment);
-					artist.addComment(comment);
-					return comment;
-				});
+	private Function<Flux<Comment>, Flux<Comment>> filterByGenreAndLinkCommentToArtist(final String genre) {
+	    final Map<String, Artist> artistsWithGenreById = getArtistsWithGenreById(genre);
+		return f -> f.filter(comment ->  commentHasArtistOfGenreAndArtistDoesNotContainComment(artistsWithGenreById, comment))
+				.map(comment -> updateComment(artistsWithGenreById, comment));
 	}
+
+	private static boolean commentHasArtistOfGenreAndArtistDoesNotContainComment(final Map<String, Artist> artistsById, Comment comment) {
+        final Artist artist = getArtist(artistsById, comment);
+        return artist != null && !artist.getComments().contains(comment);
+    }
+
+    private static Comment updateComment(final Map<String, Artist> artistsById, Comment comment) {
+        final Artist artist = getArtist(artistsById, comment);
+        artist.addComment(comment);
+        return comment;
+    }
 
 	private Map<String, Artist> getArtistsWithGenreById(final String genre) {
 		final Map<String, Artist> mappingFilteredArtistById = new HashMap<>();
