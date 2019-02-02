@@ -82,13 +82,13 @@ public class GenreAPI {
 				.map(comment -> updateComment(artistsWithGenreById, comment));
 	}
 
-	private static boolean commentHasArtistOfGenreAndArtistDoesNotContainComment(final Map<String, Artist> artistsById, Comment comment) {
+	private static boolean commentHasArtistOfGenreAndArtistDoesNotContainComment(final Map<String, Artist> artistsById, final Comment comment) {
 		final Artist artist = getArtist(artistsById, comment);
 		return artist != null && !artist.getComments()
 				.contains(comment);
 	}
 
-	private static Comment updateComment(final Map<String, Artist> artistsById, Comment comment) {
+	private static Comment updateComment(final Map<String, Artist> artistsById, final Comment comment) {
 		final Artist artist = getArtist(artistsById, comment);
 		artist.addComment(comment);
 		return comment;
@@ -107,7 +107,7 @@ public class GenreAPI {
 		final String artistId = comment.getArtist()
 				.getId();
 		if (log.isDebugEnabled()) {
-			log.debug("comment = " + comment + ", artistId = " + artistId);
+			log.debug("comment = {}, artistId = " + artistId, comment);
 		}
 		return artistsById.get(artistId);
 	}
