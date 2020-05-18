@@ -11,7 +11,6 @@ import static org.mockito.Mockito.verify;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.csouchet.test.extension.TestStatusLoggerExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +28,7 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
-import com.bonitasoft.reactiveworkshop.service.CommentService;
+import com.bonitasoft.reactiveworkshop.util.extension.TestStatusLoggerExtension;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

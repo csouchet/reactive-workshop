@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import org.csouchet.test.extension.TestStatusLoggerExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +19,7 @@ import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.exception.NotFoundException;
 import com.bonitasoft.reactiveworkshop.repository.ArtistRepository;
 import com.bonitasoft.reactiveworkshop.service.CommentService;
+import com.bonitasoft.reactiveworkshop.util.extension.TestStatusLoggerExtension;
 
 import reactor.core.publisher.Flux;
 import reactor.test.publisher.TestPublisher;

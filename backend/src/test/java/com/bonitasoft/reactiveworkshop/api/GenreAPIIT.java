@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.csouchet.test.extension.TestStatusLoggerExtension;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +27,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import com.bonitasoft.reactiveworkshop.ReactiveWorkshopApplication;
 import com.bonitasoft.reactiveworkshop.domain.comment.Comment;
 import com.bonitasoft.reactiveworkshop.external.ExternalApplication;
+import com.bonitasoft.reactiveworkshop.util.extension.TestStatusLoggerExtension;
 
 /**
  * @author SOUCHET Céline

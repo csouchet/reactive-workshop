@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.csouchet.test.extension.TestStatusLoggerExtension;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +22,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import com.bonitasoft.reactiveworkshop.ReactiveWorkshopApplication;
 import com.bonitasoft.reactiveworkshop.domain.artist.Artist;
 import com.bonitasoft.reactiveworkshop.external.ExternalApplication;
+import com.bonitasoft.reactiveworkshop.util.extension.TestStatusLoggerExtension;
 
 /**
  * @author SOUCHET Céline
