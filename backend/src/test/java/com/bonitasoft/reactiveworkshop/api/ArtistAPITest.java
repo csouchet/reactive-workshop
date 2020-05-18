@@ -2,7 +2,6 @@ package com.bonitasoft.reactiveworkshop.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,10 +21,11 @@ import com.bonitasoft.reactiveworkshop.service.CommentService;
 import com.bonitasoft.reactiveworkshop.util.extension.TestStatusLoggerExtension;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.publisher.TestPublisher;
 
 /**
- * @author SOUCHET Céline
+ * @author SOUCHET CÃ©line
  *
  */
 @ExtendWith({TestStatusLoggerExtension.class, SpringExtension.class})
@@ -152,16 +152,6 @@ public class ArtistAPITest {
 		given(artistRepository.findById(id)).willReturn(Mono.empty());
 
 		final Comment comment = new Comment(new Artist(), "user name", "message");
-		// final RequestHeadersUriSpec headersUriSpec =
-		// mock(RequestHeadersUriSpec.class);
-		// final RequestHeadersSpec headersSpec =
-		// mock(RequestHeadersSpec.class);
-		// final ResponseSpec responseSpec = mock(ResponseSpec.class);
-		// given(webClient.get()).willReturn(headersUriSpec);
-		// given(headersUriSpec.uri("/comments/{artistId}/last10",
-		// id)).willReturn(headersSpec);
-		// given(headersSpec.retrieve()).willReturn(responseSpec);
-		// given(responseSpec.bodyToFlux(Comment.class)).willReturn(Flux.just(comment));
 
 		given(commentService.get10LastCommentsOfArtist(id)).willReturn(Flux.just(comment));
 
