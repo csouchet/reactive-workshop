@@ -59,7 +59,7 @@ dockerRun {
     name 'mongo'
     image 'mongo'
     ports '27017:27017'  
-    env 'mongo': 'latest' 
+    env 'MONGO_INITDB_ROOT_USERNAME': 'bonita', 'MONGO_INITDB_ROOT_PASSWORD': 'bonita'
 //    clean true 
     command 'sleep', '100'
 }
